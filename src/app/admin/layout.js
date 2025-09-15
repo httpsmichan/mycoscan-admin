@@ -8,6 +8,7 @@ export default function AdminLayout({ children }) {
   const tabs = [
     { name: "Dashboard", path: "/admin/dashboard" },
     { name: "DVO Mushrooms", path: "/admin/mushroom-encyclopedia" },
+    { name: "Requests", path: "/admin/verification-requests" },
     { name: "Manage Users", path: "/admin/users" },
     { name: "Reports", path: "/admin/reports" },
     { name: "Settings", path: "/admin/settings" },
