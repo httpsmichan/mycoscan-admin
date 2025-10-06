@@ -57,16 +57,12 @@ export default function MushroomEncyclopediaPage() {
   const [edibility, setEdibility] = useState("");
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
-<<<<<<< HEAD
   const [selectedFiles, setSelectedFiles] = useState([]);
-=======
->>>>>>> e33b287ac2c8791360edbab9a166b47c4dc037ee
 
   const [toxicity, setToxicity] = useState([""]);
   const [onset, setOnset] = useState([""]);
   const [duration, setDuration] = useState([""]);
   const [longTerm, setLongTerm] = useState([""]);
-<<<<<<< HEAD
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState(null);
 
@@ -80,14 +76,6 @@ export default function MushroomEncyclopediaPage() {
 
   // Firestore
   const [mushrooms, setMushrooms] = useState([]);
-=======
-
-  const [reason, setReason] = useState("");
-
-  // Firestore
-  const [mushrooms, setMushrooms] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
->>>>>>> e33b287ac2c8791360edbab9a166b47c4dc037ee
 
   // helpers
   const addField = (setter) => setter((prev) => [...prev, ""]);
@@ -99,7 +87,6 @@ export default function MushroomEncyclopediaPage() {
       return newValues;
     });
 
-<<<<<<< HEAD
 // Upload to Cloudinary
 const handleImageUpload = async (e) => {
   const files = e.target.files;
@@ -131,8 +118,6 @@ const handleImageUpload = async (e) => {
 };
 
 
-=======
->>>>>>> e33b287ac2c8791360edbab9a166b47c4dc037ee
   // fetch mushrooms
   const fetchData = async () => {
     const querySnapshot = await getDocs(collection(db, "mushroom-encyclopedia"));
@@ -161,11 +146,8 @@ const handleImageUpload = async (e) => {
     setLongTerm([""]);
     setReason("");
     setSelectedId(null);
-<<<<<<< HEAD
     setCharacteristics([""]);
     setSelectedFiles([]);
-=======
->>>>>>> e33b287ac2c8791360edbab9a166b47c4dc037ee
   };
 
   // when selecting mushroom
@@ -185,11 +167,8 @@ const handleImageUpload = async (e) => {
     setDuration(m.duration || [""]);
     setLongTerm(m.longTerm || [""]);
     setReason(m.reason || "");
-<<<<<<< HEAD
     setCharacteristics(m.characteristics || [""]);
 
-=======
->>>>>>> e33b287ac2c8791360edbab9a166b47c4dc037ee
   };
 
   // submit new or update
@@ -197,7 +176,6 @@ const handleImageUpload = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-<<<<<<< HEAD
     let uploadedUrls = [...images];
 
     // Upload selected files only when saving
@@ -223,23 +201,15 @@ const handleImageUpload = async (e) => {
     setUploading(false);
   }
 
-=======
->>>>>>> e33b287ac2c8791360edbab9a166b47c4dc037ee
     const baseData = {
       mushroomName,
       description,
       commonNames,
       habitats,
-<<<<<<< HEAD
       characteristics,
       funFacts,
       edibility,
       images: uploadedUrls,
-=======
-      funFacts,
-      edibility,
-      images,
->>>>>>> e33b287ac2c8791360edbab9a166b47c4dc037ee
       createdAt: serverTimestamp(),
     };
 
@@ -288,11 +258,7 @@ const handleImageUpload = async (e) => {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-<<<<<<< HEAD
         <h2 className="text-xl text-center font-bold text-gray-700 mb-4">Mushroom Encyclopedia</h2>
-=======
-        <h2 className="text-2xl font-bold">🍄 Mushroom Encyclopedia</h2>
->>>>>>> e33b287ac2c8791360edbab9a166b47c4dc037ee
         <button
           type="button"
           onClick={clearForm}
@@ -302,7 +268,6 @@ const handleImageUpload = async (e) => {
         </button>
       </div>
 
-<<<<<<< HEAD
       {/* Mushroom list as scrollable table */}
 <div className="mb-10">
   <h3 className="text-lg font-semibold mb-2">Mushroom List</h3>
@@ -351,20 +316,6 @@ const handleImageUpload = async (e) => {
 </div>
 
 
-=======
-      {/* Mushroom list */}
-      <div className="flex flex-wrap gap-2 text-sm mb-10">
-        {mushrooms.map((m) => (
-          <button
-            key={m.id}
-            onClick={() => handleSelect(m)}
-            className={`px-3 py-1 border rounded ${selectedId === m.id ? "bg-blue-200" : "bg-gray-100"}`}
-          >
-            {m.mushroomName}
-          </button>
-        ))}
-      </div>
->>>>>>> e33b287ac2c8791360edbab9a166b47c4dc037ee
 
       {/* Full Form */}
       <form className="space-y-6" onSubmit={handleSubmit}>
@@ -473,7 +424,6 @@ const handleImageUpload = async (e) => {
           </>
         )}
 
-<<<<<<< HEAD
         {/* Characteristics */}
         <div>
           <label className="block font-medium mb-1">Characteristic(s)</label>
@@ -488,8 +438,6 @@ const handleImageUpload = async (e) => {
           />
         </div>
 
-=======
->>>>>>> e33b287ac2c8791360edbab9a166b47c4dc037ee
         {/* Fun Facts */}
         <div>
           <label className="block font-medium mb-1">Fun Fact(s)</label>
@@ -497,7 +445,6 @@ const handleImageUpload = async (e) => {
         </div>
 
         {/* Images */}
-<<<<<<< HEAD
 <div>
   <label className="block font-medium mb-1">Images</label>
 
@@ -565,12 +512,6 @@ const handleImageUpload = async (e) => {
     </>
   )}
 </div>
-=======
-        <div>
-          <label className="block font-medium mb-1">Image URLs (paste links)</label>
-          <InputRow values={images} setter={setImages} placeholder="Enter image URL" keyPrefix="images" addField={addField} removeField={removeField} updateField={updateField} />
-        </div>
->>>>>>> e33b287ac2c8791360edbab9a166b47c4dc037ee
 
         {/* Buttons */}
         <div className="flex gap-2">
