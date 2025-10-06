@@ -100,7 +100,7 @@ export default function UsersPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6">👥 Manage Users</h2>
+      <h2 className="text-xl text-center font-bold text-gray-700 mb-4">Manage Users</h2>
 
       {/* Add User */}
       <div className="mb-6 flex gap-2">

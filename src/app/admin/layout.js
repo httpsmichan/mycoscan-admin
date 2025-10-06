@@ -11,11 +11,13 @@ export default function AdminLayout({ children }) {
     { name: "Requests", path: "/admin/verification-requests" },
     { name: "Manage Users", path: "/admin/users" },
     { name: "Manage Achievements", path: "/admin/achievements" },
+    { name: "User Uploads", path: "/admin/user-uploads" },
   ];
 
   return (
-    <div className="flex min-h-screen">
-      <aside className="w-64 bg-gray-800 text-white flex flex-col p-4">
+    <div className="flex">
+      {/* Sidebar */}
+      <aside className="w-64 bg-gray-800 text-white flex flex-col p-4 h-screen sticky top-0">
         <h1 className="text-2xl font-bold mb-8">Admin Portal</h1>
         <nav className="flex flex-col gap-3">
           {tabs.map((tab) => (
@@ -32,6 +34,7 @@ export default function AdminLayout({ children }) {
         </nav>
       </aside>
 
+      {/* Main content */}
       <main className="flex-1 p-8 bg-gray-100">{children}</main>
     </div>
   );

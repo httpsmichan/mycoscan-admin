@@ -57,17 +57,25 @@ export default function MushroomEncyclopediaPage() {
   const [edibility, setEdibility] = useState("");
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const [toxicity, setToxicity] = useState([""]);
   const [onset, setOnset] = useState([""]);
   const [duration, setDuration] = useState([""]);
   const [longTerm, setLongTerm] = useState([""]);
+  const [search, setSearch] = useState("");
+  const [selectedId, setSelectedId] = useState(null);
 
   const [reason, setReason] = useState("");
+  const [characteristics, setCharacteristics] = useState([""]);
+
+  const CLOUD_NAME = "diaw4uoea";
+  const UPLOAD_PRESET = "mycoscan";
+
+  const [uploading, setUploading] = useState(false);
 
   // Firestore
   const [mushrooms, setMushrooms] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
 
   // helpers
   const addField = (setter) => setter((prev) => [...prev, ""]);
@@ -78,6 +86,37 @@ export default function MushroomEncyclopediaPage() {
       newValues[index] = value;
       return newValues;
     });
+
+// Upload to Cloudinary
+const handleImageUpload = async (e) => {
+  const files = e.target.files;
+  if (!files.length) return;
+
+  setUploading(true);
+  const uploadedUrls = [];
+
+  for (const file of files) {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "your_upload_preset"); // replace
+    formData.append("cloud_name", "your_cloud_name"); // replace
+
+    try {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/your_cloud_name/image/upload`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      uploadedUrls.push(data.secure_url);
+    } catch (err) {
+      console.error("Upload failed:", err);
+    }
+  }
+
+  setImages((prev) => [...prev, ...uploadedUrls]);
+  setUploading(false);
+};
+
 
   // fetch mushrooms
   const fetchData = async () => {
@@ -107,6 +146,8 @@ export default function MushroomEncyclopediaPage() {
     setLongTerm([""]);
     setReason("");
     setSelectedId(null);
+    setCharacteristics([""]);
+    setSelectedFiles([]);
   };
 
   // when selecting mushroom
@@ -126,6 +167,8 @@ export default function MushroomEncyclopediaPage() {
     setDuration(m.duration || [""]);
     setLongTerm(m.longTerm || [""]);
     setReason(m.reason || "");
+    setCharacteristics(m.characteristics || [""]);
+
   };
 
   // submit new or update
@@ -133,14 +176,40 @@ export default function MushroomEncyclopediaPage() {
     e.preventDefault();
     setLoading(true);
 
+    let uploadedUrls = [...images];
+
+    // Upload selected files only when saving
+  if (selectedFiles.length > 0) {
+    setUploading(true);
+    for (const file of selectedFiles) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", UPLOAD_PRESET);
+      formData.append("cloud_name", CLOUD_NAME);
+
+      try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        if (data.secure_url) uploadedUrls.push(data.secure_url);
+      } catch (err) {
+        console.error("Upload failed:", err);
+      }
+    }
+    setUploading(false);
+  }
+
     const baseData = {
       mushroomName,
       description,
       commonNames,
       habitats,
+      characteristics,
       funFacts,
       edibility,
-      images,
+      images: uploadedUrls,
       createdAt: serverTimestamp(),
     };
 
@@ -189,7 +258,7 @@ export default function MushroomEncyclopediaPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">🍄 Mushroom Encyclopedia</h2>
+        <h2 className="text-xl text-center font-bold text-gray-700 mb-4">Mushroom Encyclopedia</h2>
         <button
           type="button"
           onClick={clearForm}
@@ -199,18 +268,54 @@ export default function MushroomEncyclopediaPage() {
         </button>
       </div>
 
-      {/* Mushroom list */}
-      <div className="flex flex-wrap gap-2 text-sm mb-10">
-        {mushrooms.map((m) => (
-          <button
-            key={m.id}
-            onClick={() => handleSelect(m)}
-            className={`px-3 py-1 border rounded ${selectedId === m.id ? "bg-blue-200" : "bg-gray-100"}`}
-          >
-            {m.mushroomName}
-          </button>
-        ))}
-      </div>
+      {/* Mushroom list as scrollable table */}
+<div className="mb-10">
+  <h3 className="text-lg font-semibold mb-2">Mushroom List</h3>
+
+ {/* 🔍 Search input */}
+<input
+  type="text"
+  placeholder="Search by name or edibility..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  className="mb-2 p-2 border rounded w-full max-w focus:outline-none focus:ring-2 focus:ring-blue-400"
+/>
+
+  <div className="border rounded overflow-auto" style={{ maxHeight: "200px" }}>
+    <table className="min-w-full text-sm">
+      <thead className="bg-gray-100 sticky top-0">
+        <tr>
+          <th className="px-3 py-2 text-left">Name</th>
+          <th className="px-3 py-2 text-left">Edibility</th>
+        </tr>
+      </thead>
+      <tbody>
+        {mushrooms
+          .filter((m) => {
+            const term = search.toLowerCase();
+            return (
+              m.mushroomName?.toLowerCase().includes(term) ||
+              m.edibility?.toLowerCase().includes(term)
+            );
+          })
+          .map((m) => (
+            <tr
+              key={m.id}
+              className={`cursor-pointer hover:bg-blue-100 ${
+                selectedId === m.id ? "bg-blue-200" : ""
+              }`}
+              onClick={() => handleSelect(m)}
+            >
+              <td className="px-3 py-2">{m.mushroomName}</td>
+              <td className="px-3 py-2">{m.edibility}</td>
+            </tr>
+          ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
 
       {/* Full Form */}
       <form className="space-y-6" onSubmit={handleSubmit}>
@@ -319,6 +424,20 @@ export default function MushroomEncyclopediaPage() {
           </>
         )}
 
+        {/* Characteristics */}
+        <div>
+          <label className="block font-medium mb-1">Characteristic(s)</label>
+          <InputRow
+            values={characteristics}
+            setter={setCharacteristics}
+            placeholder="Enter characteristic"
+            keyPrefix="characteristics"
+            addField={addField}
+            removeField={removeField}
+            updateField={updateField}
+          />
+        </div>
+
         {/* Fun Facts */}
         <div>
           <label className="block font-medium mb-1">Fun Fact(s)</label>
@@ -326,10 +445,73 @@ export default function MushroomEncyclopediaPage() {
         </div>
 
         {/* Images */}
-        <div>
-          <label className="block font-medium mb-1">Image URLs (paste links)</label>
-          <InputRow values={images} setter={setImages} placeholder="Enter image URL" keyPrefix="images" addField={addField} removeField={removeField} updateField={updateField} />
+<div>
+  <label className="block font-medium mb-1">Images</label>
+
+  {selectedId ? (
+    <div className="space-y-2">
+      {images.length > 0 ? (
+        <div className="flex flex-wrap gap-2 mt-2">
+          {images.map((url, i) => (
+            <div key={i} className="relative">
+              <img
+                src={url}
+                alt={`uploaded-${i}`}
+                className="w-20 h-20 object-cover rounded border"
+              />
+              <button
+                type="button"
+                onClick={() =>
+                  setImages((prev) => prev.filter((_, index) => index !== i))
+                }
+                className="absolute top-0 right-0 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center"
+              >
+                ×
+              </button>
+            </div>
+          ))}
         </div>
+      ) : (
+        <p className="text-gray-500 text-sm">No images uploaded</p>
+      )}
+    </div>
+  ) : (
+    <>
+      <input
+        type="file"
+        multiple
+        accept="image/*"
+        onChange={(e) => setSelectedFiles([...e.target.files])}
+        className="border px-3 py-2 rounded w-full"
+      />
+
+      {selectedFiles.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-2">
+          {Array.from(selectedFiles).map((file, i) => (
+            <div key={i} className="relative">
+              <img
+                src={URL.createObjectURL(file)}
+                alt={`preview-${i}`}
+                className="w-20 h-20 object-cover rounded border"
+              />
+              <button
+                type="button"
+                onClick={() =>
+                  setSelectedFiles((prev) =>
+                    prev.filter((_, index) => index !== i)
+                  )
+                }
+                className="absolute top-0 right-0 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  )}
+</div>
 
         {/* Buttons */}
         <div className="flex gap-2">

@@ -68,7 +68,7 @@ export default function AchievementsPage() {
         }
       );
       const data = await res.json();
-      setBadgeImage(data.secure_url); // ✅ Cloudinary URL
+      setBadgeImage(data.secure_url); 
     } catch (err) {
       console.error("Cloudinary upload error", err);
       alert("❌ Failed to upload image");
@@ -122,7 +122,7 @@ export default function AchievementsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">🏆 Achievements</h2>
+        <h2 className="text-xl text-center font-bold text-gray-700 mb-4">Achievements</h2>
         <button
           type="button"
           onClick={clearForm}
