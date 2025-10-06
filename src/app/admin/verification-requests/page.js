@@ -56,7 +56,11 @@ export default function ReportsPage() {
 
   return (
     <div className="p-4">
+<<<<<<< HEAD
       <h2 className="text-xl text-center font-bold text-gray-700 mb-4">Requests</h2>
+=======
+      <h2 className="text-xl font-bold mb-4">📑 Requests</h2>
+>>>>>>> e33b287ac2c8791360edbab9a166b47c4dc037ee
 
       {applications.length === 0 ? (
         <p>No requests found.</p>

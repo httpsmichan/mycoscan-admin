@@ -12,11 +12,17 @@
     "cloudinary": "^2.7.0",
     "file-saver": "^2.0.5",
     "firebase": "^12.2.1",
+<<<<<<< HEAD
     "firebase-admin": "^13.5.0",
     "next": "^15.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "recharts": "^3.2.1"
+=======
+    "next": "15.5.2",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+>>>>>>> e33b287ac2c8791360edbab9a166b47c4dc037ee
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
